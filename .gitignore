@@ -1,0 +1,5 @@
+# Ignore the following files/directories
+.vscode
+__pycache__
+plugins/__pycache__
+
