@@ -15,7 +15,7 @@ class bolflowTests(unittest.TestCase):
             indir+'/test1-in2.xlsx'
         ]
         inclass = indir+'/test1-inC.xlsx'
-        outfile = indir+'/test1-out.csv'
+        outfile = indir+'/test1-out.join.csv'
         self.widget = predata.preData(infiles, inclass, outfile)
 
     def testJoinFiles(self):

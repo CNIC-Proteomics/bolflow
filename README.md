@@ -45,3 +45,13 @@ Running all tests:
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
+
+## Running simple examples
+Help for WDL worflow
+```
+python join_files.py -ii tests/test1-in1.xlsx tests/test1-in2.xlsx -ic tests/test1-inC.xlsx -o tests/test1-out.join.csv
+python frequency.py -i tests/test1-out.join.csv -o tests/test1-out.freq.csv
+```
+
+
+

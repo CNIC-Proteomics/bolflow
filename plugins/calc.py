@@ -1,3 +1,4 @@
+import logging
 import pandas
 import string
 
@@ -21,6 +22,7 @@ class calculate:
         '''
         Calculate the frequency
         '''
+# BEGIN: DEPRECATED ------
         # freq. based on the groups
         # icol = 3
 #         df1s = []
@@ -71,30 +73,45 @@ class calculate:
 #         # convert multiple index column ('Group','Cohort') in unique index
 #         df2.columns = ['-'.join(col).strip() for col in df2.columns.values]
 
-        # freq. based on the groups
+# END: DEPRECATED ------
+        # freq. based on groups
+        logging.debug('freq. based on groups')
         df1 = self.__freq_a(['Group'], True)
-        print(df1)
-
-        # freq. based on per single batch
-        df1_1 = self.__freq_s(df1,'Group')
-        print(df1_1)
+        logging.debug('\n'+str(df1))
+        # freq. 'group' based on ALL and QC per single batch
+        logging.debug('freq. based on per single batch')
+        df1_1 = self.__freq_s(df1,'Group',['ALL'],'byFALL')
+        logging.debug('\n'+str(df1_1))
+        df1_2 = self.__freq_s(df1,'Group',['QC'],'byFQC')
+        logging.debug('\n'+str(df1_2))
 
         # freq. based on group-cohort
+        logging.debug('freq. based on group-cohort')
         df2 = self.__freq_a(['Group','Cohort'])
-        print(df2)
-
-        # freq. based on per single batch
-        # df2_1 = self.__freq_s2(df2,'Group',['B','C','D'])
-        # print(df2_1)
-
-        # df2_1 = self.__freq_s2(df2,'Cohort Batch',['B','C','D'])
-        # print(df2_1)
+        logging.debug('\n'+str(df2))
+        # freq. 'group-cohort' per single batch
+        logging.debug('freq. based on per single batch')
+        df2_1 = self.__freq_s(df2,'Group',self.group,'byFSampGroup')
+        logging.debug('\n'+str(df2_1))
+        df2_2 = self.__freq_s(df2,'Cohort Batch',self.group,'byFSampCohort')
+        logging.debug('\n'+str(df2_2))
+        df2_3 = self.__freq_s(df2,'Group',['QC'],'byFSampQC')
+        logging.debug('\n'+str(df2_3))
         
-        # # concat freq's and print
-        # df = pandas.concat([df1,df2,df1_1,df2_1], axis=1, join_axes=[self.df.index])
-        # df.columns = ['Freq_' + col for col in df.columns.values]
-        # self.df = pandas.concat([df,self.df], axis=1)
-        # self.df.to_csv(self.outfile)
+        # concat freq's
+        logging.debug('concat freq\'s')
+        df = pandas.concat([df1,df2,df1_1,df1_2,df2_1,df2_2,df2_3], axis=1, join_axes=[self.df.index])
+
+        # rename columns
+        logging.debug('rename colums of freq')        
+        df.columns = ['Freq_'+'-'.join(col).strip() if type(col) == tuple else 'Freq_'+str(col) for col in df.columns.values]
+        logging.debug('\n'+str(df))
+        
+        # concat all freq's and print
+        logging.debug('concat all freq\'s and print')        
+        self.df = pandas.concat([df,self.df], axis=1)
+        self.df.to_csv(self.outfile)
+
 
     def __freq_a(self,grp,all=False):
         icol = 3
@@ -132,24 +149,43 @@ class calculate:
         # df.columns = ['-'.join(col).strip() for col in df.columns.values]
         return df
 
-    def __freq_s(self,df,cmp):
-        n = ['ALL','QC']
-        c = ['byFALL','byFQC']
-        group = df.loc[cmp,n]
-        df_1 = pandas.DataFrame(index=self.df.index, columns=n)
-        for name,row in df.iterrows():
-            if not ('Group' in name) and not ('Cohort' in name) and not ('Global' in name):
-                d = df.loc[name,n]
-                df_1.loc[name] = (d >= group)
-        df_1.columns = c
-        return df_1
+    # def __freq_s(self,idf,grps,n,c=None):
+    #     for g in grps:
+    #         # print('-- '+g)
+    #         grp = idf.loc[g,n]
+    #         df = pandas.DataFrame(index=self.df.index, columns=grps)
+    #         print(df)
+    #         for name,row in idf.iterrows():
+    #             if not ('Group' in name) and not ('Cohort' in name) and not ('Global' in name):
+    #                 print('-- '+name)
+    #                 d = idf.loc[name,n]
+    #                 # df.loc[name] = any(d >= grp)
+    #                 print(any(d >= grp))
+    #                 print((d >= grp))
+    #                 # df.loc[name,g] = any(d >= grp)
+    #         if c:
+    #             df.columns = c
+    #     return df
 
+    def __freq_s(self,idf,g,n,c):
+        grp = idf.loc[g,n]
+        df = pandas.DataFrame(index=self.df.index, columns=[c])
+        # print(df)
+        for name,row in idf.iterrows():
+            if not ('Group' in name) and not ('Cohort' in name) and not ('Global' in name):
+                # print('-- '+name)
+                d = idf.loc[name,n]
+                # df.loc[name] = any(d >= grp)
+                # print(any(d >= grp))
+                # print((d >= grp))
+                df.loc[name,c] = any(d >= grp)
+        return df
 
     def __freq_s2(self,df,cmp,ns):
-        print(df)
+        # print(df)
         # a = [i for i in ns if i in df.columns]
         a = [x for x in df.columns if any(y in x for y in ns)]
-        print(a)
+        # print(a)
         # n = ['ALL','QC']
         # c = ['byFALL','byFQC']
         # group = df.loc['Group',n]
