@@ -2,7 +2,7 @@ import argparse, logging, os
 import subprocess
 
 # import components for bolflow
-from plugins import predata
+from plugins import calc
 
 __author__ = 'jmrodriguezc'
 
@@ -10,11 +10,11 @@ def main(args):
     ''' Main function'''
 
     logging.info('create bolflow object')
-    w = predata.preData(args.infiles, args.incfile, args.outfile)
+    w = calc.calculate(args.infile, args.outfile)
     
-    logging.info('join input files')
-    w.join()
-    
+    logging.info('calculate the frequency')
+    w.frequency()
+
 
 if __name__ == "__main__":
     # parse arguments
@@ -22,10 +22,9 @@ if __name__ == "__main__":
         description='Join the input files for the metabolomics workflow',
         epilog='''
         Example:
-            join_files.py -ii ~/indir/V1_HILIC_POS_0-6min_Original.xlsx ~/indir/V1_HILIC_POS_4-11min_Original.xlsx -ic ~/indir/Classification_V1.xlsx -o ~/outdir/V1_HILIC_POS_combined-filtered.csv
+            frequency.py -i ~/outdir/V1_HILIC_POS_combined-filtered.join.csv -o ~/outdir/V1_HILIC_POS_combined-filtered.freq.csv
         ''')
-    parser.add_argument('-ii',  '--infiles', required=True, nargs='+', help='input files for the workflow')
-    parser.add_argument('-ic',  '--incfile', required=True, help='input file with the classification for the workflow')
+    parser.add_argument('-i',  '--infile',  required=True, help='joined file for the workflow')
     parser.add_argument('-o',  '--outfile', required=True, help='combined file')
     parser.add_argument('-v', dest='verbose', action='store_true', help="Increase output verbosity")
     args = parser.parse_args()

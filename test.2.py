@@ -2,7 +2,7 @@ import unittest
 import os,sys
 
 # import components for bolflow
-from plugins import join_files
+from plugins import calculation
 
 class bolflowTests(unittest.TestCase):
     '''
@@ -10,20 +10,22 @@ class bolflowTests(unittest.TestCase):
     '''
     def setUp(self):
         indir = os.path.dirname(os.path.abspath(__file__))+'/test'
-        infiles = [
-            indir+'/test1-in1.xlsx',
-            indir+'/test1-in2.xlsx'
-        ]
-        inclass = indir+'/test1-inC.xlsx'
-        outfile = indir+'/test1-out.tsv'
-        self.widget = join_files.joinFiles(infiles, inclass, outfile)
-
-    def testJoinFiles(self):
-        self.widget.join()
+        infile = indir+'/test1-out.join.csv'
+        outfile = indir+'/test1-out.freq.csv'
+        self.widget = calculation.calculate(infile, outfile)
 
     def testFrequency(self):
-        self.widget.join()
         self.widget.frequency()
+    
+    # testCV (Coefficient of Variation)
+
+    # testFilters (filters of frequency)
+
+    # testNormaCV (normalization of CV's)
+
+    # testDiscardDuplicates
+
+     
 
 def main():
     unittest.main()
