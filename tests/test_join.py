@@ -2,7 +2,7 @@ import unittest
 import os,sys
 
 # import components for bolflow
-from plugins import calculation
+from plugins import predata
 
 class bolflowTests(unittest.TestCase):
     '''
@@ -10,12 +10,16 @@ class bolflowTests(unittest.TestCase):
     '''
     def setUp(self):
         indir = os.path.dirname(os.path.abspath(__file__))
-        infile = indir+'/test1-out.join.csv'
-        outfile = indir+'/test1-out.freq.csv'
-        self.widget = calculation.calculate(infile, outfile)
+        infiles = [
+            indir+'/test1-in1.xlsx',
+            indir+'/test1-in2.xlsx'
+        ]
+        inclass = indir+'/test1-inC.xlsx'
+        outfile = indir+'/test1-out.csv'
+        self.widget = predata.preData(infiles, inclass, outfile)
 
-    def testFrequency(self):
-        self.widget.frequency()
+    def testJoinFiles(self):
+        self.widget.join()
     
     # testCV (Coefficient of Variation)
 

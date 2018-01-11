@@ -26,3 +26,22 @@
 Scaling ?
 Fold change calculation?
 
+
+## UnitTest
+
+Running a single test module:
+```
+python -m unittest tests.test_join
+```
+
+Running a single test case or test method:
+```
+python -m unittest tests.test_join.bolflowTests
+python -m unittest tests.test_join.bolflowTests.testJoinFiles
+```
+
+Running all tests:
+```
+python -m unittest discover -s tests -p "test_*.py"
+```
+
