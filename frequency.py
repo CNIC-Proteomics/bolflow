@@ -10,11 +10,16 @@ def main(args):
     ''' Main function'''
 
     logging.info('create bolflow object')
-    w = calc.calculate(args.infile, args.outfile)
+    w = calc.calculate(args.infile)
     
     logging.info('calculate the frequency')
     w.frequency()
 
+    logging.info('calculate the standard desviation')
+    w.cv('H_QC')
+
+    logging.info('print dataframe')
+    w.to_csv(args.outfile)
 
 if __name__ == "__main__":
     # parse arguments
@@ -22,7 +27,7 @@ if __name__ == "__main__":
         description='Join the input files for the metabolomics workflow',
         epilog='''
         Example:
-            frequency.py -i ~/outdir/V1_HILIC_POS_combined-filtered.join.csv -o ~/outdir/V1_HILIC_POS_combined-filtered.freq.csv
+            frequency.py -i ~/outdir/V1_HILIC_POS_combined-filtered.join.csv -o ~/outdir/V1_HILIC_POS_combined-filtered.freq-cv.csv
         ''')
     parser.add_argument('-i',  '--infile',  required=True, help='joined file for the workflow')
     parser.add_argument('-o',  '--outfile', required=True, help='combined file')

@@ -18,18 +18,26 @@ class preData:
         '''
         Join the Metabolomic files into unique file
         '''
-        dfs = []
+        # create df from all input files
+        # get the max length of index
+        idfs = []
+        lmax = 1
+        for infile in self.infiles:
+            d = pandas.read_excel(infile, na_values=['NA'])
+            l = len( str(d.index.argmax() + 1) )
+            if l > lmax : lmax = l
+            idfs.append(d)
+        # append dataframes
         # init with classification file
+        dfs = []
         c = pandas.read_excel(self.inclass, na_values=['NA'])
         dfs.append(self.__classify(c))
-        # append dataframes
-        for idx, infile in enumerate(self.infiles):
-            d = pandas.read_excel(infile, na_values=['NA'])
+        for idx, d in enumerate(idfs):
             # delete cols
             d = self.__del_cols(d)
             # create index
-            d = self.__add_index(d, idx)
-            dfs.append(d)    
+            d = self.__add_index(d, idx, lmax)
+            dfs.append(d)
         # merge dfs
         df = pandas.concat(dfs)
         # move the column to head of list using index, pop and insert
@@ -57,8 +65,8 @@ class preData:
         d.columns = d.columns.str.replace('\s*Group Area:\s*', '')
         return d
 
-    def __add_index(self, df, idx):
+    def __add_index(self, df, idx,l):
         i = list(string.ascii_uppercase)[idx]
-        cols = [ i+str(c+1) for c in df.index ]
+        cols = [ i+str(c+1).zfill(l) for c in df.index ]
         df.insert(loc=0, column='Name', value=cols)
         return df
