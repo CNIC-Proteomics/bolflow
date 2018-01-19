@@ -1,3 +1,4 @@
+import logging
 import pandas
 import string
 
@@ -23,23 +24,25 @@ class preData:
         idfs = []
         lmax = 1
         for infile in self.infiles:
-            d = pandas.read_excel(infile, na_values=['NA'])
+            d = None
+            logging.debug('read file '+infile)
+            # d = pandas.read_excel(infile, na_values=['NA'])
+            d = pandas.read_table(infile, na_values=['NA'])
+            d = self.__del_cols(d)
             l = len( str(d.index.argmax() + 1) )
             if l > lmax : lmax = l
+            logging.debug('append file '+infile)
             idfs.append(d)
         # append dataframes
         # init with classification file
-        dfs = []
+        logging.debug('init global dataframe')
         c = pandas.read_excel(self.inclass, na_values=['NA'])
-        dfs.append(self.__classify(c))
+        df = self.__classify(c)
         for idx, d in enumerate(idfs):
-            # delete cols
-            d = self.__del_cols(d)
-            # create index
+            logging.debug('add index')
             d = self.__add_index(d, idx, lmax)
-            dfs.append(d)
-        # merge dfs
-        df = pandas.concat(dfs)
+            logging.debug('append dataframe')
+            df = pandas.concat([df,d])
         # move the column to head of list using index, pop and insert
         cols = list(df)
         cols.insert(0, cols.pop(cols.index('Name')))
@@ -49,6 +52,8 @@ class preData:
         # set Name col as index
         self.df = df.set_index('Name')
         # create csv
+        self.df.to_csv(self.outfile)
+        logging.debug('create csv')
         self.df.to_csv(self.outfile)
 
     def __classify(self, df):
@@ -65,7 +70,7 @@ class preData:
         d.columns = d.columns.str.replace('\s*Group Area:\s*', '')
         return d
 
-    def __add_index(self, df, idx,l):
+    def __add_index(self, df, idx, l):
         i = list(string.ascii_uppercase)[idx]
         cols = [ i+str(c+1).zfill(l) for c in df.index ]
         df.insert(loc=0, column='Name', value=cols)

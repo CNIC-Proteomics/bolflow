@@ -1,5 +1,7 @@
 # Ignore the following files/directories
 .vscode
+*.pyc
+*/*.pyc
 __pycache__
 plugins/__pycache__
 tests/*.csv
