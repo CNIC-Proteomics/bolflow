@@ -15,8 +15,8 @@ def main(args):
     logging.info('calculate the frequency')
     w.frequency()
 
-    # logging.info('calculate the standard desviation')
-    # w.cv('H_QC')
+    logging.info('calculate the standard desviation')
+    w.cv('H_QC')
 
     logging.info('print dataframe')
     w.to_csv(args.outfile)

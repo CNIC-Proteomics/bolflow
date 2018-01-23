@@ -15,9 +15,11 @@ class calculate:
         self.group_lbl = 'Group'
         g = self.df.loc[self.group_lbl].dropna().unique()
         self.qc_lbl = 'QC'
+        print(g)
         self.group = [ c for c in g if not self.qc_lbl in c ] # discard 'QC'
         self.df_freq = None
         self.df_cv = None
+        self.names = [name for name in self.df.index if ('Cohort' not in name) and ('Group' not in name) and ('Batch' not in name) and ('Global' not in name)]        
 
     def frequency(self):
         '''
@@ -27,30 +29,15 @@ class calculate:
         logging.debug('freq. based on groups')
         df1 = self.__freq_a(['Group'], True)
         logging.debug('\n'+str(df1))
-        # # freq. 'group' based on ALL and QC per single batch
-        # logging.debug('freq. based on per single batch')
-        # df1_1 = self.__freq_s(df1,'Group',['ALL'],'byFALL')
-        # logging.debug('\n'+str(df1_1))
-        # df1_2 = self.__freq_s(df1,'Group',['QC'],'byFQC')
-        # logging.debug('\n'+str(df1_2))
 
         # freq. based on group-cohort
         logging.debug('freq. based on group-cohort')
         df2 = self.__freq_a(['Group','Cohort'])
         logging.debug('\n'+str(df2))
-        # # freq. 'group-cohort' per single batch
-        # logging.debug('freq. based on per single batch')
-        # df2_1 = self.__freq_s(df2,'Group',self.group,'byFSampGroup')
-        # logging.debug('\n'+str(df2_1))
-        # df2_2 = self.__freq_s(df2,'Cohort Batch',self.group,'byFSampCohort')
-        # logging.debug('\n'+str(df2_2))
-        # df2_3 = self.__freq_s(df2,'Group',['QC'],'byFSampQC')
-        # logging.debug('\n'+str(df2_3))
         
         # concat freq's
         logging.debug('concat freq\'s')
         self.df_freq = pandas.concat([df1,df2], axis=1, join_axes=[self.df.index])
-        # df = pandas.concat([df1,df2,df1_1,df1_2,df2_1,df2_2,df2_3], axis=1, join_axes=[self.df.index])
 
         # rename columns
         logging.debug('rename colums')
@@ -123,32 +110,25 @@ class calculate:
                 d = (df_trans['Cohort'] == coh) & (df_trans['Cohort Batch'] == coh_bat)
                 c = d[d == True].index.tolist()
                 if c:
-                    for name,row in idf[c].iterrows():
-                        if not ('Group' in name) and not ('Cohort' in name) and not ('Global' in name):
-                            row = row.astype('float64')
-                            df.loc[name,(coh+'-'+coh_bat)] = (row.std() / row.mean() ) * 100
+                    dn = idf.loc[self.names,c].astype(float)
+                    df.loc[self.names,(coh+'-'+coh_bat)] = ( dn.std(axis=1) / dn.mean(axis=1) ) * 100
             # calculate cohort cv's
             logging.debug('calculate cohort cv')
             d = (df_trans['Cohort'] == coh)
             c = d[d == True].index.tolist()
             if c:
-                for name,row in idf[c].iterrows():
-                    if not ('Group' in name) and not ('Cohort' in name) and not ('Global' in name):
-                        row = row.astype('float64')
-                        df.loc[name,coh] = (row.std() / row.mean() ) * 100
+                dn = idf.loc[self.names,c].astype(float)
+                df.loc[self.names,coh] = ( dn.std(axis=1) / dn.mean(axis=1) ) * 100
         # calculate all cv
         logging.debug('calculate all cv')
         c = idf.columns
         if c.any():
-            for name,row in idf[c].iterrows():
-                if not ('Group' in name) and not ('Cohort' in name) and not ('Global' in name):
-                    row = row.astype('float64')
-                    df.loc[name,'all'] = (row.std() / row.mean() ) * 100
+            dn = idf.loc[self.names,c].astype(float)
+            df.loc[self.names,'all'] = ( dn.std(axis=1) / dn.mean(axis=1) ) * 100
         # delete empty columns
         logging.debug('delete empty columns')
         df = df.dropna(axis=1, how='all')
         return df
-                            
 
     def to_csv(self,outfile):
         '''
@@ -164,16 +144,6 @@ class calculate:
 
         # concat all freq's
         self.df.to_csv(outfile)        
-
-
-    # def __freq_s(self,idf,g,n,c):
-    #     grp = idf.loc[g,n]
-    #     df = pandas.DataFrame(index=self.df.index, columns=[c])
-    #     for name,row in idf.iterrows():
-    #         if not ('Group' in name) and not ('Cohort' in name) and not ('Global' in name):
-    #             d = idf.loc[name,n]
-    #             df.loc[name,c] = any(d >= grp)
-    #     return df
 
 
 
