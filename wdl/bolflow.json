@@ -1,0 +1,5 @@
+{
+  "bolFlow.infiles": ["test1-in1.txt","test1-in2.txt"],
+  "bolFlow.incfile": "test1-inC.xlsx",
+  "bolFlow.name": "test1.out"
+}

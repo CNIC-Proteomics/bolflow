@@ -15,11 +15,10 @@ class calculate:
         self.group_lbl = 'Group'
         g = self.df.loc[self.group_lbl].dropna().unique()
         self.qc_lbl = 'QC'
-        print(g)
         self.group = [ c for c in g if not self.qc_lbl in c ] # discard 'QC'
         self.df_freq = None
         self.df_cv = None
-        self.names = [name for name in self.df.index if ('Cohort' not in name) and ('Group' not in name) and ('Batch' not in name) and ('Global' not in name)]        
+        self.names = [name for name in self.df.index if ('Cohort' not in name) and ('Group' not in name) and ('Batch' not in name) and ('Global' not in name)]
 
     def frequency(self):
         '''
@@ -28,12 +27,10 @@ class calculate:
         # freq. based on groups
         logging.debug('freq. based on groups')
         df1 = self.__freq_a(['Group'], True)
-        logging.debug('\n'+str(df1))
 
         # freq. based on group-cohort
         logging.debug('freq. based on group-cohort')
         df2 = self.__freq_a(['Group','Cohort'])
-        logging.debug('\n'+str(df2))
         
         # concat freq's
         logging.debug('concat freq\'s')
@@ -42,7 +39,6 @@ class calculate:
         # rename columns
         logging.debug('rename colums')
         self.df_freq.columns = ['Freq_'+'-'.join(col).strip() if type(col) == tuple else 'Freq_'+str(col) for col in self.df_freq.columns.values]
-        logging.debug('\n'+str(self.df_freq))
         
     def __freq_a(self,grp,all=False):
         icol = 3
@@ -83,8 +79,6 @@ class calculate:
         # rename columns
         logging.debug('rename colums')
         self.df_cv.columns = ['CV_'+c for c in self.df_cv.columns.values]
-        logging.debug('\n'+str(self.df_cv))
-
         
     def __cv_a(self,idf):
         # get the cohort's and cohort-batch
@@ -141,7 +135,12 @@ class calculate:
         if self.df_freq is not None:
             logging.debug('concat freq\'s')
             self.df = pandas.concat([self.df_freq,self.df], axis=1)
-
+        # reorder columns
+        cols = list(self.df)
+        cols.insert(0, cols.pop(cols.index('Apex m/z')))
+        cols.insert(1, cols.pop(cols.index('RT [min]')))
+        cols.insert(2, cols.pop(cols.index('Max. Area')))
+        self.df = self.df.loc[:, cols]
         # concat all freq's
         self.df.to_csv(outfile)        
 

@@ -13,7 +13,11 @@ def main(args):
     w = filt.filter(args.infile)
     
     logging.info('filter the frequency')
-    w.filter('freq', args.ffreq, args.fcv)
+    w.filter_freq(args.ffreq, args.fcv, 'Freq')
+
+    logging.info('filter the frequency')
+    # w.del_dup({ range(0,4.5): 'A', range(5,11): 'B' })
+    w.del_dup({ 'A': [0,4.5], 'B': [5,11] })
 
     logging.info('print dataframe')
     w.to_csv(args.outfile)    
