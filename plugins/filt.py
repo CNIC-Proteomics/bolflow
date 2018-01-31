@@ -105,7 +105,8 @@ class filter:
                         elif ( df.loc[dup, 'CV_all'] >= df.loc[dup_nxt, 'CV_all'] ):
                             lbl = dup                
                 df.loc[lbl, 'Duplicate'] = 'YES'
-        self.df.insert(loc=0, column='Duplicate', value=df['Duplicate'])
+        if 'Duplicate' in df:
+            self.df.insert(loc=0, column='Duplicate', value=df['Duplicate'])
 
     def to_csv(self,outfile):
         '''
