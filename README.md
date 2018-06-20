@@ -57,7 +57,7 @@ python -m unittest discover -s tests -p "test_*.py"
 Run sample workflow:
 ```
 $ python join_files.py -ii tests/test1-in1.txt tests/test1-in2.txt -ic tests/test1-inC.xlsx -o tests/test1-out.join.csv -v
-$ python freq-cv.py -i tests/test1-out.join.csv -o tests/test1-out.freq-cv.csv -v
+$ python freq-cv.py -i tests/test1-out.join.csv -qc H_QC1 -o tests/test1-out.freq-cv.csv -v
 $ python filter.py  -i tests/test1-out.freq-cv.csv -o tests/test1-out.freq-cv-filt.csv -v
 ```
 
@@ -72,10 +72,8 @@ $ python filter.py -ff 80 -fc 50 -i Metabolomics_WORKFLOW/Processing_HILIC_POS/V
 
 ## Running WDL workflow
 
- cp -rp bolflow.wdl bolflow.json /mnt/projects/metabolomics/bolflow/tests/. && cd /mnt/projects/metabolomics/bolflow/tests/ && java -jar /usr/local/lib/cromwell/cromwell.jar   run bolflow.wdl --inputs bolflow.json && cd -
 
-```
-$ cp -rp bolflow.wdl bolflow.json /mnt/projects/metabolomics/bolflow/tests/.
+java -jar /usr/local/lib/wdl/wdltool.jar inputs bolflow.wdl > bolflow.json
 
-$ cd /mnt/projects/metabolomics/bolflow/tests/ && java -jar /usr/local/lib/cromwell/cromwell.jar   run bolflow.wdl --inputs bolflow.json
-```
+
+cd /mnt/projects/metabolomics/bolflow/wdl && java -Dconfig.file=application.conf -jar /usr/local/lib/cromwell/cromwell.jar run bolflow.wdl --inputs bolflow.json

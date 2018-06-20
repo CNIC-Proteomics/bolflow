@@ -17,7 +17,7 @@ def main(args):
     w.filter_freq(args.ffreq, args.fcv, 'Freq')
 
     logging.info('filter the frequency')
-    w.del_dup({ 'A': [0,4.5], 'B': [5,11] })
+    # w.del_dup({ 'A': [0,4.5], 'B': [5,11] })
 
     logging.info('print dataframe')
     w.to_csv(args.outfile)    

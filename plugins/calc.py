@@ -1,6 +1,7 @@
 import logging
 import pandas
 import string
+import re
 
 __author__ = 'jmrodriguezc'
 
@@ -18,7 +19,7 @@ class calculate:
         self.group = [ c for c in g if not self.qc_lbl in c ] # discard 'QC'
         self.df_freq = None
         self.df_cv = None
-        self.names = [name for name in self.df.index if ('Cohort' not in name) and ('Group' not in name) and ('Batch' not in name) and ('Global' not in name)]
+        self.names = [name for name in self.df.index if re.search(r'^\w{1}\d+$', name)] # experiments
 
     def frequency(self):
         '''
@@ -142,7 +143,7 @@ class calculate:
         cols.insert(2, cols.pop(cols.index('Max. Area')))
         self.df = self.df.loc[:, cols]
         # concat all freq's
-        self.df.to_csv(outfile)        
+        self.df.to_csv(outfile)
 
 
 

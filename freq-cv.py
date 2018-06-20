@@ -17,7 +17,7 @@ def main(args):
     w.frequency()
 
     logging.info('calculate the standard desviation')
-    w.cv('H_QC')
+    w.cv(args.tag_qc)
 
     logging.info('print dataframe')
     w.to_csv(args.outfile)
@@ -29,9 +29,10 @@ if __name__ == "__main__":
         description='Join the input files for the metabolomics workflow',
         epilog='''
         Example:
-            frequency.py -i ~/outdir/V1_HILIC_POS_combined-filtered.join.csv -o ~/outdir/V1_HILIC_POS_combined-filtered.freq.csv
+            frequency.py -i ~/outdir/V1_HILIC_POS_combined-filtered.join.csv -qc C18_QC -o ~/outdir/V1_HILIC_POS_combined-filtered.freq.csv
         ''')
     parser.add_argument('-i',  '--infile',  required=True, help='joined file for the workflow')
+    parser.add_argument('-qc',  '--tag_qc',  required=True, help='prefix for the QC tags')
     parser.add_argument('-o',  '--outfile', required=True, help='combined file')
     parser.add_argument('-v', dest='verbose', action='store_true', help="Increase output verbosity")
     args = parser.parse_args()

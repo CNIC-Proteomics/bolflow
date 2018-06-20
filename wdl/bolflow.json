@@ -1,5 +1,12 @@
 {
-  "bolFlow.infiles": ["test1-in1.txt","test1-in2.txt"],
-  "bolFlow.incfile": "test1-inC.xlsx",
-  "bolFlow.name": "test1.out"
+  "bolFlow.name": "Processing_C18_POS",
+  "bolFlow.infiles": [
+    "/mnt/projects/metabolomics/bolflow/Metabolomics_WORKFLOW/Processing_C18_POS/Merged_Features_V1_C18_POS_0-8min_16022018.tsv",
+    "/mnt/projects/metabolomics/bolflow/Metabolomics_WORKFLOW/Processing_C18_POS/Merged_Features_V1_C18_POS_6-15min_22022018.tsv",
+    "/mnt/projects/metabolomics/bolflow/Metabolomics_WORKFLOW/Processing_C18_POS/Merged_Features_V1_C18_POS_13-26min_26022018.tsv"
+  ],
+  "bolFlow.incfile": "/mnt/projects/metabolomics/bolflow/Metabolomics_WORKFLOW/Processing_C18_POS/Classification_V1_C18.xlsx",
+  "bolFlow.filtData.filtFreq": "80",
+  "bolFlow.filtData.filtCV": "50",
+  "bolFlow.copy.outDir": "/mnt/projects/metabolomics/bolflow/Metabolomics_WORKFLOW/"
 }

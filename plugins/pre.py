@@ -56,6 +56,7 @@ class preData:
         self.df.to_csv(self.outfile)
 
     def __classify(self, df):
+        df['Samples'] = df['Samples'].str.strip() # trim whitespaces
         d = df.set_index('Samples').transpose()
         d.insert(loc=0, column='Name', value=d.index)
         d.index = range(len(d))
