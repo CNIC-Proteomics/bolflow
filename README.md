@@ -65,7 +65,7 @@ Run real workflow:
 ```
 $ python join_files.py -ii Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_0-6min_Original.txt Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_4-11min_Original.txt -ic Metabolomics_WORKFLOW/Processing_HILIC_POS/Classification_V1.xlsx -o Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_combined-filtered.join.csv
 
-$ python freq-cv.py -i Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_combined-filtered.join.csv -o Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_combined-filtered.freq-cv.csv
+$ python freq-cv.py -i Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_combined-filtered.join.csv -qc H_QC1 -o Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_combined-filtered.freq-cv.csv
 
 $ python filter.py -ff 80 -fc 50 -i Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_combined-filtered.freq-cv.csv -o Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_combined-filtered.freq-cv-filt.csv
 ```

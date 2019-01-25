@@ -26,7 +26,8 @@ class preData:
         for infile in self.infiles:
             d = None
             logging.debug('read file '+infile)
-            d = pandas.read_table(infile, na_values=['NA'])
+            # d = pandas.read_table(infile, na_values=['NA'])
+            d = pandas.read_excel(infile, na_values=['NA'])
             d = self.__del_cols(d)
             l = len( str(d.index.argmax() + 1) )
             if l > lmax : lmax = l

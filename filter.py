@@ -13,11 +13,12 @@ def main(args):
     logging.info('create bolflow object')
     w = filt.filter(args.infile)
     
-    logging.info('filter the frequency')
+    logging.info('filter the frequency (per group of samples and QCs)')
     w.filter_freq(args.ffreq, args.fcv, 'Freq')
 
     logging.info('filter the frequency')
-    # w.del_dup({ 'A': [0,4.5], 'B': [5,11] })
+    if args.rem_dup:
+        w.del_dup({ 'A': [0,15], 'B': [13,28] })
 
     logging.info('print dataframe')
     w.to_csv(args.outfile)    
@@ -32,8 +33,9 @@ if __name__ == "__main__":
             filter.py -i ~/outdir/V1_HILIC_POS_combined-filtered.freq.csv -ff 80 -fcv 50 -o ~/outdir/V1_HILIC_POS_combined-filtered.freq-filt.csv
         ''')
     parser.add_argument('-i',   '--infile',  required=True, help='combined file for the workflow')
-    parser.add_argument('-ff',  '--ffreq',   default=80, help='filter for the frequency')
-    parser.add_argument('-fc',  '--fcv',     default=50, help='filter for the cv')
+    parser.add_argument('-ff',  '--ffreq',   default=False, help='filter by the frequency of samples group. By default, none')
+    parser.add_argument('-fc',  '--fcv',     default=False, help='filter for the cv. By default, none')
+    parser.add_argument('-d',   '--rem_dup', default=False, help='flag that says if we remove duplicates')
     parser.add_argument('-o',   '--outfile', required=True, help='filtered file')
     parser.add_argument('-v', dest='verbose', action='store_true', help="Increase output verbosity")
     args = parser.parse_args()
