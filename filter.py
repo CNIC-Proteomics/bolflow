@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import argparse, logging, os
 import subprocess
+import json
 
 # import components for bolflow
 from plugins import filt
@@ -13,12 +14,13 @@ def main(args):
     logging.info('create bolflow object')
     w = filt.filter(args.infile)
     
-    logging.info('filter the frequency (per group of samples and QCs)')
-    w.filter_freq(args.ffreq, args.fcv, 'Freq')
+    if args.ffreq | args.fcv:
+        logging.info('filter the frequency (per group of samples and QCs): freq:'+args.ffreq+' qc:'+args.fcv)
+        w.filter_freq(args.ffreq, args.fcv, 'Freq')
 
-    logging.info('filter the frequency')
     if args.rem_dup:
-        w.del_dup({ 'A': [0,15], 'B': [13,28] })
+        logging.info('filter the frequency: '+args.rem_dup)
+        w.del_dup( json.loads(args.rem_dup) )
 
     logging.info('print dataframe')
     w.to_csv(args.outfile)    
@@ -35,7 +37,7 @@ if __name__ == "__main__":
     parser.add_argument('-i',   '--infile',  required=True, help='combined file for the workflow')
     parser.add_argument('-ff',  '--ffreq',   default=False, help='filter by the frequency of samples group. By default, none')
     parser.add_argument('-fc',  '--fcv',     default=False, help='filter for the cv. By default, none')
-    parser.add_argument('-d',   '--rem_dup', default=False, help='flag that says if we remove duplicates')
+    parser.add_argument('-d',   '--rem_dup', help='flag that says if we remove duplicates')
     parser.add_argument('-o',   '--outfile', required=True, help='filtered file')
     parser.add_argument('-v', dest='verbose', action='store_true', help="Increase output verbosity")
     args = parser.parse_args()
