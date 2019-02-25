@@ -14,8 +14,8 @@ def main(args):
     logging.info('create bolflow object')
     w = filt.filter(args.infile)
     
-    if args.ffreq | args.fcv:
-        logging.info('filter the frequency (per group of samples and QCs): freq:'+args.ffreq+' qc:'+args.fcv)
+    if args.ffreq or args.fcv:
+        logging.info('filter the frequency (per group of samples and QCs): freq:'+str(args.ffreq)+' qc:'+str(args.fcv))
         w.filter_freq(args.ffreq, args.fcv, 'Freq')
 
     if args.rem_dup:
