@@ -42,7 +42,7 @@ class preData:
             logging.debug('add index')
             d = self.__add_index(d, idx, lmax)
             logging.debug('append dataframe')
-            df = pandas.concat([df,d])
+            df = pandas.concat([df,d], sort=True)
         # move the column to head of list using index, pop and insert
         cols = list(df)
         cols.insert(0, cols.pop(cols.index('Name')))
