@@ -1,9 +1,9 @@
 #!/usr/bin/python
 import argparse, logging, os
-import subprocess
+import json
 
 # import components for bolflow
-from plugins import calc
+from plugins import filt
 
 __author__ = 'jmrodriguezc'
 
@@ -11,16 +11,13 @@ def main(args):
     ''' Main function'''
 
     logging.info('create bolflow object')
-    w = calc.calculate(args.infile)
+    w = filt.filter(args.infile)
     
-    logging.info('calculate the frequency')
-    w.frequency()
-
-    logging.info('calculate the standard desviation')
-    w.cv(args.tag_qc)
+    logging.info('remove duplicates')
+    w.del_dup( json.loads(args.rem_dup) )
 
     logging.info('print dataframe')
-    w.to_csv(args.outfile)
+    w.to_csv(args.outfile)    
 
 
 if __name__ == "__main__":
@@ -29,11 +26,11 @@ if __name__ == "__main__":
         description='Join the input files for the metabolomics workflow',
         epilog='''
         Example:
-            frequency.py -i ~/outdir/V1_HILIC_POS_combined-filtered.join.csv -qc C18_QC -o ~/outdir/V1_HILIC_POS_combined-filtered.freq.csv
+            rem_duplicates.py -i ~/outdir/V1_HILIC_POS_combined-filtered.freq.csv -d '{"A":[0,4], "B":[3,8], "C":[7,12] }' -o ~/outdir/V1_HILIC_POS_combined-filtered.rem_dup.csv
         ''')
-    parser.add_argument('-i',  '--infile',  required=True, help='joined file for the workflow')
-    parser.add_argument('-qc',  '--tag_qc',  required=True, help='prefix for the QC tags')
-    parser.add_argument('-o',  '--outfile', required=True, help='combined file')
+    parser.add_argument('-i',   '--infile',  required=True, help='combined file for the workflow')
+    parser.add_argument('-d',   '--rem_dup', required=True, help='json with the times for each group. Eg, {"A":[0,4], "B":[3,8], "C":[7,12]}')
+    parser.add_argument('-o',   '--outfile', required=True, help='filtered file')
     parser.add_argument('-v', dest='verbose', action='store_true', help="Increase output verbosity")
     args = parser.parse_args()
 

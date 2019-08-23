@@ -1,19 +1,16 @@
+from . import bolflow
+
 import logging
 import pandas
 import string
 
-__author__ = 'jmrodriguezc'
 
-
-class preData:
-    '''
-    Make the data pre-processing in the workflow
-    '''
-    def __init__(self, i, c, o):
+class preData(bolflow.bolflow):
+    
+    def __init__(self, i, c=None):
         self.infiles = i
         self.inclass = c
-        self.outfile = o
-        self.df = None
+        super().__init__(None, c)
 
     def join(self):        
         '''
@@ -26,7 +23,6 @@ class preData:
         for infile in self.infiles:
             d = None
             logging.debug('read file '+infile)
-            # d = pandas.read_table(infile, na_values=['NA'])
             d = pandas.read_excel(infile, na_values=['NA'])
             d = self.__del_cols(d)
             l = len( str(d.index.argmax() + 1) )
@@ -37,24 +33,23 @@ class preData:
         # init with classification file
         logging.debug('init global dataframe')
         c = pandas.read_excel(self.inclass, na_values=['NA'])
-        df = self.__classify(c)
+        df = self.__classify(c)        
+        df = df.append(pandas.Series('Max', index=df.columns), ignore_index=True)
         for idx, d in enumerate(idfs):
             logging.debug('add index')
             d = self.__add_index(d, idx, lmax)
             logging.debug('append dataframe')
             df = pandas.concat([df,d], sort=True)
-        # move the column to head of list using index, pop and insert
-        cols = list(df)
-        cols.insert(0, cols.pop(cols.index('Name')))
-        cols.insert(2, cols.pop(cols.index('RT [min]')))
-        cols.insert(3, cols.pop(cols.index('Max. Area')))
-        df = df.loc[:, cols]
         # set Name col as index
         self.df = df.set_index('Name')
-        # create csv
-        self.df.to_csv(self.outfile)
-        logging.debug('create csv')
-        self.df.to_csv(self.outfile)
+        # # move the column to head of list using index, pop and insert
+        # cols = list(df)
+        # cols.insert(0, cols.pop(cols.index('Name')))
+        # cols.insert(1, cols.pop(cols.index('RT [min]')))
+        # cols.insert(2, cols.pop(cols.index('Max. Area')))
+        # df = df.loc[:, cols]
+        # # create csv
+        # self.df.to_csv(self.outfile)
 
     def __classify(self, df):
         df['Samples'] = df['Samples'].str.strip() # trim whitespaces
@@ -76,3 +71,18 @@ class preData:
         cols = [ i+str(c+1).zfill(l) for c in df.index ]
         df.insert(loc=0, column='Name', value=cols)
         return df
+
+    def to_csv(self,outfile):
+        '''
+        Print to CSV
+        '''
+        # reorder columns
+        cols = list(self.df)
+        cols.insert(0, cols.pop(cols.index(self.incol_mz)))
+        cols.insert(1, cols.pop(cols.index(self.incol_rt)))
+        cols.insert(2, cols.pop(cols.index(self.incol_max_area)))
+        self.df = self.df.loc[:, cols]
+        # create csv
+        self.df.to_csv(outfile)
+
+

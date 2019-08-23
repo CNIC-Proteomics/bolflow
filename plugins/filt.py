@@ -1,109 +1,51 @@
+from . import bolflow
+
 import logging
 import pandas
-import string
 import re
 
 __author__ = 'jmrodriguezc'
 
-
-class filter:
+class filter(bolflow.bolflow):
     '''
     Make the calculations in the workflow
     '''
-    def __init__(self, i):
-        self.infile = i
-        self.df = pandas.read_csv(self.infile, na_values=['NA'], low_memory=False).set_index('Name')
-        self.names = [name for name in self.df.index if re.search(r'^\w{1}\d+$', name)] # experiments
+    def __init__(self, i, c=None):
+        super().__init__(i, c)
 
-    # def filter_freq(self, fvalue, cvalue, prefix='Freq'):
-    #     '''
-    #     Filter by frequency
-    #     '''
-    #     # get dataframe with the frequency columns by group and batch
-    #     # discard the "blank" groups
-    #     logging.debug('get dataframe with the frequency columns by group and batch and without "blank" groups')
-    #     fcol = [col for col in self.df if col.startswith(prefix) and not col.startswith(prefix+'_B-') and re.search(r'\d+$', col)]
-    #     df = self.df[fcol]
-    #     # get columns from the group and qc
-    #     logging.debug('get columns from the group and qc')
-    #     col = {'grp': [], 'qc': []}
-    #     for c in fcol:
-    #         if 'QC' in c:
-    #             col['qc'].append(c)
-    #         else:
-    #             col['grp'].append(c)
-    #     # create a list with the experiment names
-    #     logging.debug('create a list with the experiment names')
-    #     # inames = [name for name in df.index if re.search(r'^\w{1}\d+$', name)]
-    #     # get the comparative value from the groups and qc using the filter value
-    #     logging.debug('get the global frequency of groups')
-    #     grp = {}
-    #     grp['grp'] = df.loc['Group', col['grp']].apply( lambda x: round( (int(x)*int(fvalue))/100 ) ).astype('float64')
-    #     grp['qc']  = df.loc['Group', col['qc']].apply( lambda x: round( (int(x)*int(cvalue))/100 ) ).astype('float64')
-    #     # filter the values separating the groups and qc: different filter cutoff
-    #     logging.debug('filter the values separating the groups and qc')
-    #     dgrp = df.loc[self.names, col['grp']] < grp['grp']
-    #     dqc = df.loc[self.names, col['qc']] < grp['qc']
-    #     # create a column with the comparison for groups
-    #     # create a column with the comparison for qc
-    #     logging.debug('extract all experiment with false condition')
-    #     dg = dgrp.all(axis=1)
-    #     dq = dqc.all(axis=1)
-    #     # join both conditions
-    #     # delete any experiment when any condition
-    #     logging.debug('drop the experiment')
-    #     dc = pandas.concat([dg,dq], axis=1)
-    #     d = dc[ dc.any(axis=1) ]
-    #     self.df.drop(d.index, inplace=True)
 
-    def filter_freq(self, fvalue=False, cvalue=False, prefix='Freq'):
+    def filter_freq(self, ftype, fvalue, fcv):
         '''
         Filter by frequency
         '''
-        # get dataframe with the frequency columns by group and batch
-        # discard the "blank" groups
-        logging.debug('get dataframe with the frequency columns by group and batch and without "blank" groups')
-        fcol = [col for col in self.df if col.startswith(prefix) and not col.startswith(prefix+'_B-') and re.search(r'\d+$', col)]
-        df = self.df[fcol]
-        # get columns from the group and qc
-        logging.debug('get columns from the group and qc')
-        col = {'grp': [], 'qc': []}
-        for c in fcol:
-            if 'QC' in c:
-                col['qc'].append(c)
-            else:
-                col['grp'].append(c)
-        # create a list with the experiment names
-        logging.debug('create a list with the experiment names')
-        # inames = [name for name in df.index if re.search(r'^\w{1}\d+$', name)]
+        # get dataframe with the frequency columns
+        # if QC then get the CV_all column
+        logging.debug('get dataframe with the frequency columns')
+        fcol = []
+        if fcv:
+            fcol = [col for col in self.df if col == 'Freq_'+ftype or col == 'CV_all']
+        else:
+            fcol = [col for col in self.df if col == 'Freq_'+ftype]
         # get the comparative value from the groups and qc using the filter value
-        grp = {}
-        dg = None
-        dq = None
-        if fvalue:
-            logging.debug('get the global frequency of groups of samples')
-            grp['grp'] = df.loc['Group', col['grp']].apply( lambda x: round( (int(x)*int(fvalue))/100 ) ).astype('float64')
-            # filter the values separating the groups and qc: different filter cutoff
-            logging.debug('filter the values separating the groups of samples')
-            dgrp = df.loc[self.names, col['grp']] < grp['grp']
-            # create a column with the comparison for groups
-            logging.debug('extract all experiment with false condition for the groups of samples')
-            dg = dgrp.all(axis=1)
-        if cvalue:
-            logging.debug('get the global frequency of QCs')
-            grp['qc']  = df.loc['Group', col['qc']].apply( lambda x: round( (int(x)*int(cvalue))/100 ) ).astype('float64')
-            # filter the values separating the groups and qc: different filter cutoff
-            logging.debug('filter the values separating the qc')
-            dqc = df.loc[self.names, col['qc']] < grp['qc']
-            # create a column with the comparison for qc
-            logging.debug('extract all experiment with false condition for QCs')
-            dq = dqc.all(axis=1)
-        # join both conditions
+        if fcol:
+            logging.debug('get the global frequency')
+            self.df = self._filter_freq(fcol,fvalue)
+
+
+    def _filter_freq(self, fcol, fvalue):
+        '''
+        Filter by frequency
+        '''
+        df = self.df[fcol]
+        # get the comparative value from the groups and qc using the filter value        
+        grp = df.loc[self.title_max].apply( lambda x: round( (int(x)*int(fvalue))/100 ) ).astype('float64')
+        # filter the values separating the groups and qc: different filter cutoff
+        dc = df.loc[self.exps] < grp
         # delete any experiment when any condition
-        logging.debug('drop the experiment')
-        dc = pandas.concat([dg,dq], axis=1)
         d = dc[ dc.any(axis=1) ]
-        self.df.drop(d.index, inplace=True)
+        df = self.df.drop(d.index.values)
+        return df
+
 
     def del_dup(self, overtimes):
         '''
@@ -111,8 +53,7 @@ class filter:
         '''
         # get the needed columns
         c = ['Freq_ALL', 'CV_all', 'Apex m/z', 'RT [min]']
-        # inames = [name for name in self.df.index if re.search(r'^\w{1}\d+$', name)] # experiments
-        df = self.df.loc[self.names, c]
+        df = self.df.loc[self.exps, c]
         # find the duplicated experiments:        
         # - sort by Apex m/z and times
         df = df.sort_values(by=['Apex m/z', 'RT [min]'])
