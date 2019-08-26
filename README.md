@@ -1,7 +1,9 @@
 # bolflow
 
-# Path in tierra: TEMPORAL
-S:\U_Proteomica\PROYECTOS\PESA_omicas\METABOLOMICS\HILIC\HILIC-POS
+Metabolomic workflow
+
+<!-- # Path in tierra: TEMPORAL
+S:\U_Proteomica\PROYECTOS\PESA_omicas\METABOLOMICS\HILIC\HILIC-POS -->
 
 # Workflow steps
 
@@ -56,6 +58,41 @@ S:\U_Proteomica\PROYECTOS\PESA_omicas\METABOLOMICS\HILIC\HILIC-POS
 ## Running scripts
 
 Run sample workflow:
+
+Step 1-2, pre-processing:
+```
+bolflow.exe  -s 1  -n test1-out  -ii tests/test1-in1.xlsx  tests/test1-in2.xlsx  -ic tests/test1-inC.xlsx  -o tests/
+```
+
+Steps 3-6, calculation:
+```
+bolflow.exe  -s 2  -n test1-out  -ii tests/test1-out.join.csv -ic tests/test1-inC.xlsx  -o tests/
+```
+
+Steps 7-8, discarding error:
+```
+bolflow.exe  -s 3  -n test1-out  -ii tests/test1-out.f-cv.csv -ic tests/test1-inC.xlsx  -o tests/  -d '{"A":[0,5], "B":[4,10]}'
+
+```
+Steps , filtering:
+```
+echo "-- filter only the freq for the Quality Control"
+bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC  -f 50
+
+echo "-- filter the freq and CV for the Quality Control"
+bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC  -f 50  -cv
+
+echo "-- filter the freq of Biological samples"
+bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t S   -f 80
+
+echo "-- filter the freq of Control group"
+bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t C   -f 80
+
+echo "-- filter the freq of Disase group"
+bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t D   -f 80
+```
+
+<!-- Run sample workflow:
 ```
 SRCDIR="d:/projects/metabolomics/bolflow"
 WSKDIR="${SRCDIR}/tests"
@@ -90,17 +127,11 @@ echo "-- filter the freq of Control group"
 python "${SRCDIR}/filter.py" -i test1-out.freq-cv-rem.csv -ic test1-inC.xlsx -t C -f 80 -o test1-out.freq-cv-rem.filt_grp_control.csv
 echo "-- filter the freq of Disase group"
 python "${SRCDIR}/filter.py" -i test1-out.freq-cv-rem.csv -ic test1-inC.xlsx -t D -f 80 -o test1-out.freq-cv-rem.filt_grp_disases.csv
-```
-
-
-<!-- Run real workflow:
-```
-$ python join_files.py -ii Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_0-6min_Original.txt Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_4-11min_Original.txt -ic Metabolomics_WORKFLOW/Processing_HILIC_POS/Classification_V1.xlsx -o Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_combined-filtered.join.csv
-
-$ python freq-cv.py -i Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_combined-filtered.join.csv -qc H_QC1 -o Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_combined-filtered.freq-cv.csv
-
-$ python filter.py -ff 80 -fc 50 -i Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_combined-filtered.freq-cv.csv -o Metabolomics_WORKFLOW/Processing_HILIC_POS/V1_HILIC_POS_combined-filtered.freq-cv-filt.csv
 ``` -->
+
+
+
+<!-- pyinstaller.exe -y -w --distpath d\:/projects/metabolomics/bolflow/dist/win/x64 bolflow.py -->
 
 
 <!--
