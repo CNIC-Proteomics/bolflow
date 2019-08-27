@@ -34,7 +34,7 @@ def main(args):
     if '1' in args.step:
         # assign input/outputs
         outfile = '{}.{}.{}'.format(outname,'join','csv')
-        logging.info('step 1: {} > {}'.format(','.join(args.infiles, outfile)))
+        logging.info('step 1: {} > {}'.format(','.join(args.infiles), outfile) )
 
         w = pre.preData(args.infiles, args.incfile)
 

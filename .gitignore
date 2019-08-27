@@ -4,5 +4,13 @@
 */*.pyc
 __pycache__
 plugins/__pycache__
+
+# test files
 tests/*.csv
+data
+
+# distribution files
+dist
+build
+*.spec
 

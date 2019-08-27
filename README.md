@@ -7,29 +7,6 @@ S:\U_Proteomica\PROYECTOS\PESA_omicas\METABOLOMICS\HILIC\HILIC-POS -->
 
 # Workflow steps
 
-<!-- OLD WORKFLOW -->
-<!-- 
-## Data pre-processing
-1. Combine the 2 matrixes: 0-6 -> take min 0-5;  4-11 -> take min 5-11
-2. Add classification to the matrix of data
-
-## Data processing
-
-### Calculation
-4. Calculate frequency per group of samples, per single batch, per cohort and global
-5. Calculate frequency of QCs per single batch, per cohort and global
-
-### Filtering
-6. Filtering 0: Discard duplicates
-7. Filtering 1: keeping features that are present at least in the 75% of one group of samples (control and disease) in each cohort, and in at least the 10% in all group of samples per cohort.
-8. Filtering 2: keeping features that are present at least in the 80% of samples in at least one group of samples (e.g. for PESA Controls and Diseases)
-9. Filtering 3: keeping features that present a CV% in QCs lower than 50% [make it optional]
-
-
-### Calculation
-10. Calculate CV% in QCs per single batch, per cohort and global
--->
-
 ## Data pre-processing
 1. Combine the 2 matrixes: 0-6 -> take min 0-5;  4-11 -> take min 5-11
 2. Add classification to the matrix of data
@@ -131,7 +108,15 @@ python "${SRCDIR}/filter.py" -i test1-out.freq-cv-rem.csv -ic test1-inC.xlsx -t 
 
 
 
-<!-- pyinstaller.exe -y -w --distpath d\:/projects/metabolomics/bolflow/dist/win/x64 bolflow.py -->
+<!-- 
+
+# Create dist
+
+pyinstaller.exe -y --distpath d\:/projects/metabolomics/bolflow/dist/win_x64 bolflow.py
+cd dist/win_x64
+zip -r bolflow-win_x64.zip bolflow
+
+-->
 
 
 <!--
