@@ -5,7 +5,7 @@ import os
 import argparse
 from argparse import RawTextHelpFormatter
 import re
-import json
+import ast
 from plugins import pre,calc,filt # import components for bolflow
 
 __author__ = 'jmrodriguezc'
@@ -81,7 +81,7 @@ def main(args):
         w = filt.filter(infile, args.incfile)
 
         logging.info('remove duplicates')
-        w.del_dup( json.loads(args.rem_dup) )
+        w.del_dup( ast.literal_eval(args.rem_dup) )
 
         logging.info('print output')
         w.to_csv(outfile)
@@ -115,32 +115,29 @@ bolflow - Metabolomic workflow
 
 Steps:
     1. join files and add features
-
     2. calculate frequency and coefficient variation
-
     3. remove duplicates
-
     4. several filters
 
 Examples:
-- all steps together:
-  bolflow.py -s 1234  -n test1-out  -ii tests/test1-in1.xlsx tests/test1-in2.xlsx  -ic tests/test1-inC.xlsx  -o tests/  -d '{"A":[0,5], "B":[4,10]}'  -t QC  -f 50
+* all steps together:
+  bolflow -s 1234  -n test1-out  -ii tests/test1-in1.xlsx tests/test1-in2.xlsx  -ic tests/test1-inC.xlsx  -o tests/  -d '{"A":[0,5], "B":[4,10]}'  -t QC  -f 50
 
-- step 1:
-  bolflow.py -s 1  -n test1-out  -ii tests/test1-in1.xlsx  tests/test1-in2.xlsx  -ic tests/test1-inC.xlsx  -o tests/
+* step 1:
+  bolflow -s 1  -n test1-out  -ii tests/test1-in1.xlsx  tests/test1-in2.xlsx  -ic tests/test1-inC.xlsx  -o tests/
 
-- step 2:
-  bolflow.py -s 2  -n test1-out  -ii tests/test1-out.join.csv -ic tests/test1-inC.xlsx  -o tests/
+* step 2:
+  bolflow -s 2  -n test1-out  -ii tests/test1-out.join.csv -ic tests/test1-inC.xlsx  -o tests/
 
-- step 3:
-  bolflow.py -s 3  -n test1-out  -ii tests/test1-out.f-cv.csv -ic tests/test1-inC.xlsx  -o tests/  -d '{"A":[0,5], "B":[4,10]}'
+* step 3:
+  bolflow -s 3  -n test1-out  -ii tests/test1-out.f-cv.csv -ic tests/test1-inC.xlsx  -o tests/  -d "{'A':[0,5], 'B':[4,10]}"
 
-- step 4:
-  bolflow.py -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC  -f 50
-  bolflow.py -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC  -f 50  -cv
-  bolflow.py -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t S   -f 80
-  bolflow.py -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t C   -f 80
-  bolflow.py -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t D   -f 80
+* step 4:
+  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC  -f 50
+  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC  -f 50  -cv
+  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t S   -f 80
+  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t C   -f 80
+  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t D   -f 80
         ''', formatter_class=RawTextHelpFormatter)
 
     required = parser.add_argument_group('required arguments')
@@ -156,7 +153,7 @@ Examples:
     conditional.add_argument('-f',  '--fvalue',  help='for step-3: filter value. By default, none')
     conditional.add_argument('-cv', '--fcv', default=None, action='store_true', help="for step-3: flag that filter also by coefficient variation")
 
-    parser.add_argument('-n',  '--outname', help='output directory')
+    parser.add_argument('-n',  '--outname', help='prefix name of output files')
     parser.add_argument('-v', dest='verbose', action='store_true', help="Increase output verbosity")
 
     args = parser.parse_args()
