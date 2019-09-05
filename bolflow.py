@@ -18,9 +18,9 @@ def main(args):
     if '3' in args.step and not args.rem_dup:
         parser.print_help(sys.stderr)
         sys.exit("\n\nERROR: we need 'rem_dup' parameter for the step-3\n")
-    if '4' in args.step and (not args.ftype or not args.fvalue):
+    if '4' in args.step and (not args.ftype or not args.ffreq):
         parser.print_help(sys.stderr)
-        sys.exit("\n\nERROR: we need 'ftype' and 'fvalue' parameters for the step-4\n")
+        sys.exit("\n\nERROR: we need 'ftype' and 'ffreq' parameters for the step-4. 'fcv' is optional\n")
 
 
     # delete the last slash
@@ -93,13 +93,13 @@ def main(args):
     
     if '4' in args.step:
         # assign input/outputs
-        outfile = '{}.{}_{}_{}_{}.{}'.format(outname,'filt',args.ftype,args.fvalue,'cv','csv') if args.fcv else '{}.{}_{}_{}.{}'.format(outname,'filt',args.ftype,args.fvalue,'csv')
+        outfile = '{}.{}_{}_{}_{}.{}'.format(outname,'filt',"-".join(args.ftype.split(',')),args.ffreq,'cv','csv') if args.fcv else '{}.{}_{}_{}.{}'.format(outname,'filt',"-".join(args.ftype.split(',')),args.ffreq,'csv')
         logging.info('step 4: {} > {}'.format(infile, outfile))
         
         w = filt.filter(infile, args.incfile)
         
-        logging.info('filter "{}" with {}%'.format(args.ftype, args.fvalue))
-        w.filter_freq(args.ftype, args.fvalue, args.fcv)
+        logging.info('filter "{}" with {}% freq. {}'.format(args.ftype, args.ffreq, 'and '+args.fcv+'% cv' if args.fcv else ''))
+        w.filter(args.ftype, args.ffreq, args.fcv)
 
         logging.info('print output')
         w.to_csv(outfile)
@@ -133,11 +133,12 @@ Examples:
   bolflow -s 3  -n test1-out  -ii tests/test1-out.f-cv.csv -ic tests/test1-inC.xlsx  -o tests/  -d "{'A':[0,5], 'B':[4,10]}"
 
 * step 4:
-  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC  -f 50
-  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC  -f 50  -cv
-  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t S   -f 80
-  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t C   -f 80
-  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t D   -f 80
+  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC    -ff 50
+  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC    -ff 50  -fc 60
+  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t S     -ff 80
+  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t C     -ff 80
+  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t D     -ff 80
+  bolflow -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t C,D   -ff 80
         ''', formatter_class=RawTextHelpFormatter)
 
     required = parser.add_argument_group('required arguments')
@@ -150,8 +151,8 @@ Examples:
     
     conditional.add_argument('-d',  '--rem_dup', help='for step-2: json with the times for each group. Eg, {"A":[0,4], "B":[3,8], "C":[7,12]}')
     conditional.add_argument('-t',  '--ftype',   help='for step-3: filter type depending on the classification file. Eg. QC (quality control), S (biological sample), C (control group), D (disease group)')
-    conditional.add_argument('-f',  '--fvalue',  help='for step-3: filter value. By default, none')
-    conditional.add_argument('-cv', '--fcv', default=None, action='store_true', help="for step-3: flag that filter also by coefficient variation")
+    conditional.add_argument('-ff', '--ffreq',   help='for step-3: filter value of frequency. By default, none')
+    conditional.add_argument('-fc', '--fcv',     help='for step-3: filter value of coefficient of variation. By default, none')
 
     parser.add_argument('-n',  '--outname', help='prefix name of output files')
     parser.add_argument('-v', dest='verbose', action='store_true', help="Increase output verbosity")

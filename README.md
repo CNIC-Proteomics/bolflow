@@ -48,26 +48,46 @@ bolflow.exe  -s 2  -n test1-out  -ii tests/test1-out.join.csv -ic tests/test1-in
 
 Steps 7-8, discarding error:
 ```
-bolflow.exe  -s 3  -n test1-out  -ii tests/test1-out.f-cv.csv -ic tests/test1-inC.xlsx  -o tests/  -d '{"A":[0,5], "B":[4,10]}'
+bolflow.exe  -s 3  -n test1-out  -ii tests/test1-out.f-cv.csv -ic tests/test1-inC.xlsx  -o tests/  -d "{'A':[0,5], 'B':[4,10]}"
 
 ```
 Steps , filtering:
 ```
 echo "-- filter only the freq for the Quality Control"
-bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC  -f 50
+bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC  -ff 50
 
 echo "-- filter the freq and CV for the Quality Control"
-bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC  -f 50  -cv
+bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC  -f 50  -fc 60
 
 echo "-- filter the freq of Biological samples"
-bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t S   -f 80
+bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t S   -ff 80
 
 echo "-- filter the freq of Control group"
-bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t C   -f 80
+bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t C   -ff 80
 
 echo "-- filter the freq of Disase group"
-bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t D   -f 80
+bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t D   -ff 80
+
+echo "-- filter the freq of Control group and Disase group"
+bolflow.exe  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t C,D   -ff 80
 ```
+
+<!-- 
+
+# Create dist
+
+Execute the following shell script
+```
+./build_win-dist.sh 0.1.26
+```
+
+
+pyinstaller.exe -y --distpath d\:/projects/metabolomics/bolflow/dist/win_x64 bolflow.py
+cd dist/win_x64
+zip -r bolflow-win_x64.zip bolflow
+
+-->
+
 
 <!-- Run sample workflow:
 ```
@@ -105,27 +125,3 @@ python "${SRCDIR}/filter.py" -i test1-out.freq-cv-rem.csv -ic test1-inC.xlsx -t 
 echo "-- filter the freq of Disase group"
 python "${SRCDIR}/filter.py" -i test1-out.freq-cv-rem.csv -ic test1-inC.xlsx -t D -f 80 -o test1-out.freq-cv-rem.filt_grp_disases.csv
 ``` -->
-
-
-
-<!-- 
-
-# Create dist
-
-pyinstaller.exe -y --distpath d\:/projects/metabolomics/bolflow/dist/win_x64 bolflow.py
-cd dist/win_x64
-zip -r bolflow-win_x64.zip bolflow
-
--->
-
-
-<!--
-
-## More things to do
-- Replacing Missing Values with KNN 
-- Normalization (include different strategies i.e. LOESS/COMBAT)
-- LOG transformation of the value with addition of constant value
-- Scaling ?
-- Fold change calculation?
-
--->

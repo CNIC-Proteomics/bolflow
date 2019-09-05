@@ -12,11 +12,11 @@ def main(args):
     logging.info('create bolflow object')
     w = filt.filter(args.infile, args.incfile)
     
-    logging.info('filter "{}" with {}%'.format(args.ftype, args.fvalue))
-    w.filter_freq(args.ftype, args.fvalue, args.fcv)
+    logging.info('filter "{}" with {}% freq. {}'.format(args.ftype, args.ffreq, 'and '+args.fcv+'% cv' if args.fcv else ''))
+    w.filter(args.ftype, args.ffreq, args.fcv)
 
-    logging.info('print dataframe')
-    w.to_csv(args.outfile)    
+    logging.info('print output')
+    w.to_csv(args.outfile)
 
 
 if __name__ == "__main__":
@@ -27,11 +27,11 @@ if __name__ == "__main__":
         Example:
             filter.py -i ~/outdir/V1_HILIC_POS_combined-filtered.freq.csv -t qc -f 50 -o ~/outdir/V1_HILIC_POS_combined-filtered.freq-filt.csv
         ''')
-    parser.add_argument('-i',  '--infile',  required=True, help='combined file for the workflow')
+    parser.add_argument('-ii',  '--infile',  required=True, help='combined file for the workflow')
     parser.add_argument('-ic', '--incfile', required=True, help='input file with the classification for the workflow')
-    parser.add_argument('-t',  '--ftype',   required=True, help='filter type depending on the classification file. Eg. QC (quality control), S (biological sample), C (control group), D (disease group)')
-    parser.add_argument('-f',  '--fvalue',  required=True, help='filter value. By default, none')
-    parser.add_argument('-cv', '--fcv', default=None, action='store_true', help="flag that filter also by coefficient variation")
+    parser.add_argument('-t',  '--ftype',   help='for step-3: filter type depending on the classification file. Eg. QC (quality control), S (biological sample), C (control group), D (disease group)')
+    parser.add_argument('-ff', '--ffreq',   help='for step-3: filter value of frequency. By default, none')
+    parser.add_argument('-fc', '--fcv',     help='for step-3: filter value of coefficient of variation. By default, none')
     parser.add_argument('-o',  '--outfile', required=True, help='filtered file')
     parser.add_argument('-v', dest='verbose', action='store_true', help="Increase output verbosity")
     args = parser.parse_args()
