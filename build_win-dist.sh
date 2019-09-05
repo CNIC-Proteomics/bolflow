@@ -10,6 +10,6 @@ echo "-- build distribution"
 pyinstaller  -y  --add-data "${TEST_INFILES};tests/" --add-data "${TEST_SCRIPT};."  --distpath ${DIST_DIR}  bolflow.py
 
 echo "-- compress distribution"
-OUTNAME="bolflow-Windows_x64-${VERSION}"
+OUTNAME="bolflow_Windoxs-x64_${VERSION}"
 cd ${DIST_DIR}
 zip -r ${OUTNAME}.zip bolflow
