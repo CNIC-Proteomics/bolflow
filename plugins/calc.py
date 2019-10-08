@@ -106,8 +106,9 @@ class calculate(bolflow.bolflow):
         d = self.df.loc[grp+self.exps].transpose()
         df = d.groupby(grp).count().transpose()
         # discard labels
-        if discard_lbl:
-            df.drop(columns=discard_lbl, inplace=True)
+        for l in discard_lbl:
+            if l in df.columns:
+                df.drop(columns=l, inplace=True)
         # add frequency of all elements
         if all:
             df.insert(loc=0, column='ALL', value=df.sum(axis=1))
@@ -123,9 +124,8 @@ class calculate(bolflow.bolflow):
         Extract the maximum value of all experiments
         '''
         df = self.df.loc[self.exps]
-
+        df = df.astype(float)
         self.df.loc['Max'] = df.max()
-
 
 
     def to_csv(self,outfile):

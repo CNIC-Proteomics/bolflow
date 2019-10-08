@@ -7,19 +7,22 @@ SET  SRC_HOME="%~dp0"
 SET  SRC_HOME=%SRC_HOME:"=%
 SET  SRC_HOME=%SRC_HOME:~0,-1%
 SET  SCRIPT=%SRC_HOME%/bolflow.exe
+REM SET  SCRIPT=python "%SRC_HOME%/../bolflow.py"
 
 :: get input variables ----------------------
-SET  /p INFILES="** Enter the list of input file(s) (Excel format): "
+SET  /p INFILES="** Enter the list of input file(s): "
 SET  /p CATFILE="** Enter the catgory file (Excel format): "
 SET  /p OUT_DIR="** Enter the output directory: "
 FOR  /F "delims=" %%i IN ("%CATFILE%") DO ( SET OUTNAME=%%~ni )
+SET  OUTNAME=%OUTNAME: =%
+
 
 :: check if we want only to filter the files ----------------------
 :init_param
-    SET /p answer="Do you want to execute all program or only Filter (b/f)? : "
-    IF /i "%answer:~,1%" EQU "b" GOTO all_params
+    SET /p answer="Do you want to execute All workflow or only Filter - you need the specific file - (a/f)? : "
+    IF /i "%answer:~,1%" EQU "a" GOTO all_params
     IF /i "%answer:~,1%" EQU "f" GOTO filter_params
-    ECHO "Please type 'f' for only filter or 'b' for the execution of everything"
+    ECHO "Please type 'f' for only filter or 'a' for the execution of all pipeline"
     GOTO init_param
 
 
@@ -36,7 +39,7 @@ FOR  /F "delims=" %%i IN ("%CATFILE%") DO ( SET OUTNAME=%%~ni )
     SET STEPS=123
     GOTO filter_params
 :param1_n
-    SET STEPS=13
+    SET STEPS=12
     GOTO filter_params
 
 :filter_params
@@ -59,7 +62,8 @@ FOR  /F "delims=" %%i IN ("%CATFILE%") DO ( SET OUTNAME=%%~ni )
 :: execute all workflow in one script ----------------------
 :run_bolflow
     ECHO ** execute workflow
-    CMD /C " "%SCRIPT%"  -d %STEPS%  -ii %INFILES% -ic "%CATFILE%"  -o "%OUT_DIR%"  -n "%OUTNAME%"  %REMDUPL_OPTION%  %FILTER_OPTIONS% "
+    ECHO " "%SCRIPT%"  -s %STEPS%  -ii %INFILES% -ic "%CATFILE%"  -o "%OUT_DIR%"  -n "%OUTNAME%"  %REMDUPL_OPTION%  %FILTER_OPTIONS% " 
+    CMD /C " "%SCRIPT%"  -s %STEPS%  -ii %INFILES% -ic "%CATFILE%"  -o "%OUT_DIR%"  -n "%OUTNAME%"  %REMDUPL_OPTION%  %FILTER_OPTIONS% "
 
 GOTO EndProcess
 

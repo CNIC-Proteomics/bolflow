@@ -60,10 +60,12 @@ class preData(bolflow.bolflow):
 
     def __del_cols(self, df):
         # header names that will be deleted
-        cols = [ c for c in df.columns if '.raw' in c.lower() or c.lower() in ['checked','name','comments'] ]
+        cols = [ c for c in df.columns if any(ext in c.lower() for ext in ['checked','name','comments','metaboprofiler','custom explanation']) ]
         d = df.drop(cols, axis=1)
         # rename some headers
-        d.columns = d.columns.str.replace('\s*Group Area:\s*', '')
+        d.columns = d.columns.str.replace(r'\s*Group\s*Area:\s*', '', regex=True)
+        d.columns = d.columns.str.replace(r'\s*Max\.\s*Area:\s*', '', regex=True)
+        d.columns = d.columns.str.replace(r'\.raw.*$', '', regex=True)        
         return d
 
     def __add_index(self, df, idx, l):

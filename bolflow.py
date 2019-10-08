@@ -70,8 +70,8 @@ def main(args):
 
         # reassign output file
         infile  = outfile
-    else:
-        infile  = args.infiles[0]
+    # else:
+    #     infile  = args.infiles[0]
 
     if '3' in args.step:
         # assign input/outputs
@@ -88,8 +88,8 @@ def main(args):
 
         # reassign output file
         infile  = outfile
-    else:
-        infile  = args.infiles[0]
+    # else:
+    #     infile  = args.infiles[0]
     
     if '4' in args.step:
         # assign input/outputs

@@ -3,7 +3,7 @@
 LOCAL_DIR=`dirname $0`
 DIST_DIR="${LOCAL_DIR}/dist/win_x64"
 TEST_INFILES="${LOCAL_DIR}/tests/test1-in*"
-BATCH_SCRIPT="${LOCAL_DIR}/bin/run_bolflow.bat"
+BATCH_SCRIPT="${LOCAL_DIR}/bin/bolflow.bat"
 VERSION=$1
 
 echo "-- build distribution"
