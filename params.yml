@@ -1,0 +1,62 @@
+# List of input file(s) paths (Excel format):
+# infiles:
+#   - infile_1
+#   - infile_2
+infiles:
+  - 
+
+# Classification file path (Excel format):
+# incfile: clas_file
+incfile: 
+
+# Output directory:
+# outdir: output_dir
+outdir: 
+
+# Name workflow:
+# wfname: Name_Workflow
+wfname: 
+
+# bolflow - Metabolomic workflow
+# 
+# Steps:
+#     1. join files and add features (join)
+#     2. calculate frequency and coefficient variation (f-cv)
+#     3. remove duplicates (rem)
+#     4. several filters (e.g filt_KO-WT_80.csv)
+# eg.
+# steps: 1234
+# only filters: name infile: xxx.f-cv.csv
+steps: 1234
+
+# Remove duplicates ---
+# remove duplicates in the samples.
+# eg.
+# remove_duplicates: {'A':[0,5], 'B':[4,10]}
+# if you don't want to filter, write:
+# remove_duplicates: false
+remove_duplicates: false
+
+# Filter options ---
+# filter by multiple values:
+# 
+# Filter by the type of samples. Eg:
+# filter: KO|WT
+# filter: KO&WT
+# filter: KO
+# filter: WT
+# If you don't want to filter, write
+# filter: false
+#
+# Filter by frequency. Eg:
+# filter_freq: 100
+# If you don't want to filter, write
+# filter_freq: false
+#
+# Filter by coefficient of variation. Eg:
+# filter_cv: 80
+# If you don't want to filter, write
+# filter_cv: false
+filter: false
+filter_freq: false
+filter_cv: false

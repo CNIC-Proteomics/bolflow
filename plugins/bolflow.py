@@ -24,7 +24,8 @@ class bolflow:
         self.incol_mz         = 'Apex m/z'
         self.incol_rt         = 'RT [min]'
         self.incol_max_area   = 'Max. Area'
-        self.df = None
+        self.df   = None
+        self.df_c = None
         # get data file
         if i:
             self.df = pandas.read_csv(i, na_values=['NA'], low_memory=False).set_index(self.icol_name)
@@ -32,15 +33,15 @@ class bolflow:
             self.exps = [name for name in self.df.index if re.search(r'^\w{1}\d+$', name)]
         # get classifycation data
         if c:
-            df_c = pandas.read_excel(c, na_values=['NA'])
+            self.df_c = pandas.read_excel(c, na_values=['NA'])
             # get groups ( discarding the 'QC' )
-            g = df_c[self.title_group].dropna().unique()
+            g = self.df_c[self.title_group].dropna().unique()
             self.group = [ c for c in g if not self.lbl_qc in c and not self.lbl_blank in c ]
             # get the names of QC
-            self.samples_qc = df_c.loc[df_c[self.title_group] == self.lbl_qc, self.title_samples].dropna().unique()
+            self.samples_qc = self.df_c.loc[self.df_c[self.title_group] == self.lbl_qc, self.title_samples].dropna().unique()
             # get the group-cohort
-            cohort = sorted( df_c[self.title_cohort].dropna().unique().tolist() )
-            cohort_batch = sorted( df_c[self.title_bat_cohort].dropna().unique().tolist() )
+            cohort = sorted( self.df_c[self.title_cohort].dropna().unique().tolist() )
+            cohort_batch = sorted( self.df_c[self.title_bat_cohort].dropna().unique().tolist() )
             if 0 in cohort_batch:
                 cohort_batch.remove(0)
             self.group_cor = []

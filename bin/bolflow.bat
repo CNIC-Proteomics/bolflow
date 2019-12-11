@@ -10,60 +10,13 @@ SET  SCRIPT=%SRC_HOME%/bolflow.exe
 REM SET  SCRIPT=python "%SRC_HOME%/../bolflow.py"
 
 :: get input variables ----------------------
-SET  /p INFILES="** Enter the list of input file(s): "
-SET  /p CATFILE="** Enter the catgory file (Excel format): "
-SET  /p OUT_DIR="** Enter the output directory: "
-FOR  /F "delims=" %%i IN ("%CATFILE%") DO ( SET OUTNAME=%%~ni )
-SET  OUTNAME=%OUTNAME: =%
+SET  /p PARFILE="** Enter the parameter file (YAML format): "
 
-
-:: check if we want only to filter the files ----------------------
-:init_param
-    SET /p answer="Do you want to execute All workflow or only Filter - you need the specific file - (a/f)? : "
-    IF /i "%answer:~,1%" EQU "a" GOTO all_params
-    IF /i "%answer:~,1%" EQU "f" GOTO filter_params
-    ECHO "Please type 'f' for only filter or 'a' for the execution of all pipeline"
-    GOTO init_param
-
-
-:: parameters for the ask by the input parameters ----------------------
-:all_params
-    SET /p answer="Do you want to remove duplicates (y/n)? : "
-    IF /i "%answer:~,1%" EQU "y" GOTO param1_y
-    IF /i "%answer:~,1%" EQU "n" GOTO param1_n
-    ECHO "Please type 'y' for Yes or 'n' for No"
-    GOTO all_params
-:param1_y
-    SET /p answer="Which are the times for the samples in the following format {'A':[0,5], 'B':[4,10]} : "
-    SET REMDUPL_OPTION=-d "%answer%"
-    SET STEPS=123
-    GOTO filter_params
-:param1_n
-    SET STEPS=12
-    GOTO filter_params
-
-:filter_params
-    SET /p answer="Do you want to filter (y/n)? :"
-    IF /i "%answer:~,1%" EQU "y" GOTO param2_y
-    IF /i "%answer:~,1%" EQU "n" GOTO run_bolflow
-    ECHO "Please type 'y' for Yes or 'n' for No"
-    GOTO filter_params
-:param2_y
-    SET STEPS=%STEPS%4
-    SET /p answer="Type of filter (eg, QC; S; C; C,D) : "
-    SET filer_type=-t %answer%
-    SET /p answer="Value of frequency (integer) : "
-    SET filter_freq_val=-ff %answer%
-    SET /p answer="Value of coefficient variation (n/integer) : "
-    IF not "%answer:~,1%" EQU "n" SET filter_cv_val=-fc %answer%
-    SET FILTER_OPTIONS=%filer_type% %filter_freq_val% %filter_cv_val%
-    GOTO run_bolflow
 
 :: execute all workflow in one script ----------------------
-:run_bolflow
-    ECHO ** execute workflow
-    ECHO " "%SCRIPT%"  -s %STEPS%  -ii %INFILES% -ic "%CATFILE%"  -o "%OUT_DIR%"  -n "%OUTNAME%"  %REMDUPL_OPTION%  %FILTER_OPTIONS% " 
-    CMD /C " "%SCRIPT%"  -s %STEPS%  -ii %INFILES% -ic "%CATFILE%"  -o "%OUT_DIR%"  -n "%OUTNAME%"  %REMDUPL_OPTION%  %FILTER_OPTIONS% "
+ECHO ** execute workflow
+ECHO " "%SCRIPT%"  -p "%PARFILE%" " 
+CMD /C " "%SCRIPT%"  -p "%PARFILE%" "
 
 GOTO EndProcess
 
