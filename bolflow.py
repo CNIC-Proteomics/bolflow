@@ -24,24 +24,24 @@ Steps:
 
 Examples:
 * all steps together:
-  -s 1234  -n test1-out  -ii tests/test1-in1.xlsx tests/test1-in2.xlsx  -ic tests/test1-inC.xlsx  -o tests/  -d '{"A":[0,5], "B":[4,10]}'  -t QC  -f 50
+  -s 1234  -n test1-out  -ii test/test1-in1.xlsx test/test1-in2.xlsx  -ic test/test1-inC.xlsx  -o test/  -d '{"A":[0,5], "B":[4,10]}'  -t QC  -f 50
 
 * step 1:
-  -s 1  -n test1-out  -ii tests/test1-in1.xlsx  tests/test1-in2.xlsx  -ic tests/test1-inC.xlsx  -o tests/
+  -s 1  -n test1-out  -ii test/test1-in1.xlsx  test/test1-in2.xlsx  -ic test/test1-inC.xlsx  -o test/
 
 * step 2:
-  -s 2  -n test1-out  -ii tests/test1-out.join.csv -ic tests/test1-inC.xlsx  -o tests/
+  -s 2  -n test1-out  -ii test/test1-out.join.csv -ic test/test1-inC.xlsx  -o test/
 
 * step 3:
-  -s 3  -n test1-out  -ii tests/test1-out.f-cv.csv -ic tests/test1-inC.xlsx  -o tests/  -d "{'A':[0,5], 'B':[4,10]}"
+  -s 3  -n test1-out  -ii test/test1-out.f-cv.csv -ic test/test1-inC.xlsx  -o test/  -d "{'A':[0,5], 'B':[4,10]}"
 
 * step 4:
-  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC    -ff 50
-  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t QC    -ff 50  -fc 60
-  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t S     -ff 80
-  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t C     -ff 80
-  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t D     -ff 80
-  -s 4  -n test1-out  -ii tests/test1-out.rem.csv  -ic tests/test1-inC.xlsx  -o tests/  -t C,D   -ff 80
+  -s 4  -n test1-out  -ii test/test1-out.rem.csv  -ic test/test1-inC.xlsx  -o test/  -t QC    -ff 50
+  -s 4  -n test1-out  -ii test/test1-out.rem.csv  -ic test/test1-inC.xlsx  -o test/  -t QC    -ff 50  -fc 60
+  -s 4  -n test1-out  -ii test/test1-out.rem.csv  -ic test/test1-inC.xlsx  -o test/  -t S     -ff 80
+  -s 4  -n test1-out  -ii test/test1-out.rem.csv  -ic test/test1-inC.xlsx  -o test/  -t C     -ff 80
+  -s 4  -n test1-out  -ii test/test1-out.rem.csv  -ic test/test1-inC.xlsx  -o test/  -t D     -ff 80
+  -s 4  -n test1-out  -ii test/test1-out.rem.csv  -ic test/test1-inC.xlsx  -o test/  -t C,D   -ff 80
     '''
 
     # check conditional parameters

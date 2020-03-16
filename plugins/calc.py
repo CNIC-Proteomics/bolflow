@@ -84,7 +84,7 @@ class calculate(bolflow.bolflow):
         Calculate the frequency
         '''
         logging.debug('freq. of qc')
-        if self.samples_qc:
+        if any(self.samples_qc):
             df1 = self.__freq_a([self.title_stype], discard_lbl=[self.lbl_sample,self.lbl_blank])
         else:
             df1 = None
@@ -100,7 +100,8 @@ class calculate(bolflow.bolflow):
 
         # concat freq's
         logging.debug('concat files')
-        df_freq = pandas.concat([df1,df2,df3,df4], axis=1, join_axes=[self.df.index], sort=False)
+        df_freq = pandas.concat([df1,df2,df3,df4], axis=1, sort=False)
+        df_freq = df_freq.reindex(self.df.index)
         # remove duplicate columns
         df_freq = df_freq.loc[:,~df_freq.columns.duplicated()]
         # concat with the main df
