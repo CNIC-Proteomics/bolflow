@@ -72,8 +72,13 @@ class filter(bolflow.bolflow):
         grp = df_g.loc[self.title_max].apply( lambda x: round( (int(x)*int(ffreq))/100 ) ).astype('float64')
         qc  = df_c.loc[self.title_max].apply( lambda x: round( (int(x)*int(fcv))/100 ) ).astype('float64')
         # filter the values separating the groups and qc: different filter cutoff
+        # CV is the coefficient of variation.
+        # Whether it is smaller than it is the smaller the better, 
+        # because it means that the signal varies very little within the QCs that are poles of the samples
+        # (and the same pool is tapped more times, every 5 real samples more or less, then the signal should be the same).
+        # The frequency is the other way around, the more data you have the better.
         dc_g = df_g.loc[self.exps] < grp
-        dc_c = df_c.loc[self.exps] < qc
+        dc_c = df_c.loc[self.exps] > qc
         # AND condition, delete any experiment don't pass the filter
         if '&' in ftype:
             g = dc_g[ dc_g.any(axis=1) ]
